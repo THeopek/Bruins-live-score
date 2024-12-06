@@ -1,1 +1,72 @@
+// URL for fetching the Bruins' data (this will depend on the API you use)
+const API_URL = 'https://api.sportsdata.io/v4/nba/scores/json/GamesBySeason/2024?key=YOUR_API_KEY'; // Replace with actual API URL
+
+// Function to fetch live score
+async function fetchLiveScore() {
+    try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+        const liveGame = data.find(game => game.Status === "Live" && game.HomeTeam.Name === "Boston Bruins");
+
+        if (liveGame) {
+            document.getElementById("live-score-content").innerHTML = `
+                <p>${liveGame.HomeTeam.Name} vs ${liveGame.AwayTeam.Name}</p>
+                <p>Score: ${liveGame.HomeTeamScore} - ${liveGame.AwayTeamScore}</p>
+            `;
+        } else {
+            document.getElementById("live-score-content").innerHTML = `<p>No live games currently.</p>`;
+        }
+    } catch (error) {
+        console.error("Error fetching live score: ", error);
+        document.getElementById("live-score-content").innerHTML = `<p>Failed to fetch live score.</p>`;
+    }
+}
+
+// Function to fetch the Bruins' schedule
+async function fetchSchedule() {
+    try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+        const schedule = data.filter(game => game.HomeTeam.Name === "Boston Bruins" || game.AwayTeam.Name === "Boston Bruins");
+
+        let scheduleHTML = "";
+        schedule.forEach(game => {
+            scheduleHTML += `
+                <p>${game.DateTime} - ${game.HomeTeam.Name} vs ${game.AwayTeam.Name}</p>
+            `;
+        });
+
+        document.getElementById("schedule-content").innerHTML = scheduleHTML;
+    } catch (error) {
+        console.error("Error fetching schedule: ", error);
+        document.getElementById("schedule-content").innerHTML = `<p>Failed to fetch schedule.</p>`;
+    }
+}
+
+// Function to fetch results (wins/losses)
+async function fetchResults() {
+    try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+        const results = data.filter(game => game.HomeTeam.Name === "Boston Bruins" || game.AwayTeam.Name === "Boston Bruins");
+
+        let resultsHTML = "";
+        results.forEach(game => {
+            const result = game.HomeTeamScore > game.AwayTeamScore ? "Win" : "Loss";
+            resultsHTML += `
+                <p>${game.DateTime} - ${game.HomeTeam.Name} vs ${game.AwayTeam.Name} - ${result}</p>
+            `;
+        });
+
+        document.getElementById("results-content").innerHTML = resultsHTML;
+    } catch (error) {
+        console.error("Error fetching results: ", error);
+        document.getElementById("results-content").innerHTML = `<p>Failed to fetch results.</p>`;
+    }
+}
+
+// Call functions to fetch the data
+fetchLiveScore();
+fetchSchedule();
+fetchResults();
 
