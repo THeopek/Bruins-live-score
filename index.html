@@ -29,7 +29,7 @@
     <h1>Boston Bruins Game</h1>
     
     <div id="score-board">
-        <p>Bruins Score: <span id="bruins-score">Loading...</span></p>
+        <p id="score-text">Loading...</p>
     </div>
 
     <h2>Pong Game</h2>
@@ -38,19 +38,23 @@
     <script>
         // Placeholder for Bruins score
         let bruinsScore = 0;
-        const scoreElement = document.getElementById('bruins-score');
+        const scoreTextElement = document.getElementById('score-text');
 
         // Fetch Bruins score from API (replace the URL with an actual API endpoint)
         function fetchBruinsScore() {
             fetch('https://api.example.com/bruins/score') // Placeholder URL
                 .then(response => response.json())
                 .then(data => {
-                    bruinsScore = data.score; // Assuming API returns a score object
-                    scoreElement.textContent = bruinsScore;
+                    if (data.game_status === 'in_progress') {
+                        bruinsScore = data.score; // Assuming API returns a score object if game is in progress
+                        scoreTextElement.textContent = `Bruins Score: ${bruinsScore}`;
+                    } else {
+                        scoreTextElement.textContent = "No current game"; // If no game is in progress
+                    }
                 })
                 .catch(error => {
                     console.error('Error fetching score:', error);
-                    scoreElement.textContent = "Error loading score";
+                    scoreTextElement.textContent = "Error loading score";
                 });
         }
 
