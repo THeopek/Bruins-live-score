@@ -29,7 +29,7 @@
     <h1>Boston Bruins Game</h1>
     
     <div id="score-board">
-        <p>Bruins Score: <span id="bruins-score">0</span></p>
+        <p>Bruins Score: <span id="bruins-score">Loading...</span></p>
     </div>
 
     <h2>Pong Game</h2>
@@ -40,14 +40,23 @@
         let bruinsScore = 0;
         const scoreElement = document.getElementById('bruins-score');
 
-        // Function to update the Bruins score (you can replace this with actual API calls)
-        function updateBruinsScore() {
-            bruinsScore += 1;  // Increase score by 1 for testing purposes
-            scoreElement.textContent = bruinsScore;
+        // Fetch Bruins score from API (replace the URL with an actual API endpoint)
+        function fetchBruinsScore() {
+            fetch('https://api.example.com/bruins/score') // Placeholder URL
+                .then(response => response.json())
+                .then(data => {
+                    bruinsScore = data.score; // Assuming API returns a score object
+                    scoreElement.textContent = bruinsScore;
+                })
+                .catch(error => {
+                    console.error('Error fetching score:', error);
+                    scoreElement.textContent = "Error loading score";
+                });
         }
 
-        // Call the updateBruinsScore function every 10 seconds for demonstration purposes
-        setInterval(updateBruinsScore, 10000); // updates the score every 10 seconds
+        // Call the fetchBruinsScore function every 10 seconds for demonstration purposes
+        setInterval(fetchBruinsScore, 10000);
+        fetchBruinsScore(); // Initial score fetch
 
         // Pong game code
         const canvas = document.getElementById("pong");
